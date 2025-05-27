@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
-import { Inter, Cabinet_Grotesk } from 'next/font/google'
+import { Inter, Outfit } from 'next/font/google'
 import './globals.css'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -8,10 +10,10 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const cabinetGrotesk = Cabinet_Grotesk({
+const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-cabinet-grotesk',
+  variable: '--font-outfit',
 })
 
 export const metadata: Metadata = {
@@ -25,9 +27,15 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cabinetGrotesk.variable}`}>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body className="min-h-screen bg-white font-sans antialiased">
-        {children}
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="flex-1 pt-16">
+            {children}
+          </main>
+          <Footer />
+        </div>
       </body>
     </html>
   )
