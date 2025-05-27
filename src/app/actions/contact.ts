@@ -14,9 +14,19 @@ export async function submitContactForm(formData: FormData) {
   const subject = formData.get('subject') as string
   const message = formData.get('message') as string
 
+  // Debug logging
+  console.log('Environment check:', {
+    hasSupabaseUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+    hasSupabaseKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    hasResendKey: !!process.env.RESEND_API_KEY,
+  })
+
   // Check if Supabase environment variables are set
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-    console.error('Missing Supabase environment variables')
+    console.error('Missing Supabase environment variables:', {
+      url: process.env.NEXT_PUBLIC_SUPABASE_URL,
+      keyExists: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    })
     return { success: false, error: 'Server configuration error' }
   }
 
@@ -49,7 +59,10 @@ export async function submitContactForm(formData: FormData) {
         },
       ])
 
-    if (error) throw error
+    if (error) {
+      console.error('Supabase insert error:', error)
+      throw error
+    }
 
     // Send email notification if Resend API key is available
     if (process.env.RESEND_API_KEY) {
