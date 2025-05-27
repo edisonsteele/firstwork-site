@@ -1,108 +1,138 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
+import { 
+  AcademicCapIcon, 
+  PlayCircleIcon, 
+  ComputerDesktopIcon,
+  BookOpenIcon,
+  CalculatorIcon,
+  UserGroupIcon,
+  ChartBarIcon,
+  LightBulbIcon,
+  ArrowPathIcon
+} from '@heroicons/react/24/outline'
 
-export default function HowItWorks() {
+export default function Page() {
   return (
     <div className="bg-white">
       {/* Hero Section */}
       <div className="relative isolate overflow-hidden bg-gradient-to-b from-[#035183]/5 to-white">
+        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#035183] to-[#6FCEF4] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+        </div>
         <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
           <div className="mx-auto max-w-2xl lg:mx-0">
             <h1 className="text-4xl font-bold tracking-tight text-[#035183] sm:text-6xl">
               How FirstWork Works
             </h1>
             <p className="mt-6 text-lg leading-8 text-[#035183]/80">
-              FirstWork uses digital reinforcement learning technology to make learning on smart devices more engaging and effective. Our approach combines proven educational methods with cutting-edge technology.
+              FirstWork revolutionizes learning by combining education with motivation. Our unique approach lets children earn access to their favorite apps by completing educational modules, creating a powerful incentive for learning.
             </p>
           </div>
         </div>
+        <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+          <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#035183] to-[#6FCEF4] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
+        </div>
       </div>
 
-      {/* Core Technology Section */}
+      {/* Work for Play Section */}
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">Core Technology</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">Work for Play: Our Core Concept</h2>
           <p className="mt-6 text-lg leading-8 text-[#035183]/80">
-            FirstWork's digital reinforcement learning technology adapts to each student's learning pace and style, providing personalized feedback and support.
+            At FirstWork, we've created a system that transforms learning into a rewarding experience. Children complete educational modules to earn time with their favorite apps, creating a natural motivation to learn.
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          <div className="flex flex-col gap-8">
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Adaptive Learning</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Our system continuously analyzes student performance and adjusts difficulty levels to maintain optimal engagement and learning progress.
-              </p>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <AcademicCapIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Complete Learning Modules</h3>
             </div>
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Real-time Feedback</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Immediate reinforcement and guidance help students understand their progress and stay motivated throughout their learning journey.
-              </p>
-            </div>
+            <p className="mt-4 text-[#035183]/80">
+              Children engage with our carefully designed educational content, mastering concepts through interactive exercises and activities.
+            </p>
           </div>
-          <div className="flex flex-col gap-8">
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Progress Tracking</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Detailed analytics and progress reports help educators and parents monitor student development and identify areas for improvement.
-              </p>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <PlayCircleIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Earn Reward Time</h3>
             </div>
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Engagement Optimization</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Our technology ensures students remain engaged by providing the right level of challenge and support at the right time.
-              </p>
-            </div>
+            <p className="mt-4 text-[#035183]/80">
+              Successful completion of learning modules earns children access to their favorite apps, creating a powerful incentive to learn.
+            </p>
           </div>
-          <div className="flex flex-col gap-8">
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Personalized Learning Paths</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Each student receives a customized learning experience based on their individual needs, strengths, and learning style.
-              </p>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <ComputerDesktopIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Proprietary Software</h3>
             </div>
-            <div className="rounded-2xl bg-[#035183]/5 p-8">
-              <h3 className="text-xl font-semibold text-[#035183]">Data-Driven Insights</h3>
-              <p className="mt-4 text-[#035183]/80">
-                Advanced analytics provide valuable insights into learning patterns and help optimize the educational experience.
-              </p>
-            </div>
+            <p className="mt-4 text-[#035183]/80">
+              Our custom software manages the learning-reward cycle, ensuring a safe and effective balance between education and play.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Learning Methods Section */}
+      {/* Learning Modules Section */}
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
-          <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">Learning Methods</h2>
+          <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">Our Learning Modules</h2>
           <p className="mt-6 text-lg leading-8 text-[#035183]/80">
-            FirstWork incorporates proven educational methods to ensure effective learning outcomes.
+            FirstWork offers a comprehensive range of learning modules designed to build essential skills while keeping children engaged and motivated.
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-2">
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Feature, Function, and Class (FFC)</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <BookOpenIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Early Learning Skills</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
-              Our comprehensive FFC curriculum helps students understand object characteristics, purposes, and categories, building a strong foundation for learning.
+              Build foundational skills through engaging activities that teach colors, shapes, numbers, and basic concepts. Perfect for young learners starting their educational journey.
             </p>
           </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Receptive Identification</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <AcademicCapIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Language Development</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
-              Students learn to identify and understand objects, concepts, and relationships through interactive exercises and real-world applications.
+              Develop essential language skills through phonics, vocabulary building, and comprehension exercises. Our interactive modules make learning to read and communicate fun and effective.
             </p>
           </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Mathematics</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <CalculatorIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Mathematics & Logic</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
-              From basic counting to complex arithmetic, our math curriculum builds skills progressively with engaging, interactive lessons.
+              Master mathematical concepts from basic counting to problem-solving. Our step-by-step approach builds confidence and understanding through interactive practice.
             </p>
           </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Phonics</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <UserGroupIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Social & Life Skills</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
-              Our phonics program helps students develop essential reading skills through systematic, engaging instruction and practice.
+              Learn essential life skills through practical exercises that teach social interaction, emotional understanding, and daily living activities in a supportive environment.
             </p>
           </div>
         </div>
@@ -117,20 +147,35 @@ export default function HowItWorks() {
           </p>
         </div>
         <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Proven Methodology</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <LightBulbIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Proven Methodology</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
               Our approach is based on established educational research and best practices in digital learning.
             </p>
           </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Measurable Results</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <ChartBarIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Measurable Results</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
               Students using FirstWork show significant improvements in learning outcomes and engagement.
             </p>
           </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <h3 className="text-xl font-semibold text-[#035183]">Continuous Improvement</h3>
+          <div className="rounded-2xl bg-[#035183]/5 p-8 transition-all duration-300 hover:bg-[#035183]/10 hover:shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="rounded-lg bg-[#035183] p-2">
+                <ArrowPathIcon className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-[#035183]">Continuous Improvement</h3>
+            </div>
             <p className="mt-4 text-[#035183]/80">
               We regularly update our system based on research findings and user feedback to ensure optimal learning outcomes.
             </p>
@@ -139,7 +184,10 @@ export default function HowItWorks() {
       </div>
 
       {/* CTA Section */}
-      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+      <div className="relative isolate mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+        <div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
+          <div className="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#035183] to-[#6FCEF4] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" />
+        </div>
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">Ready to Get Started?</h2>
           <p className="mt-6 text-lg leading-8 text-[#035183]/80">
@@ -148,14 +196,20 @@ export default function HowItWorks() {
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <Link
               href="/?showContact=true"
-              className="rounded-md bg-[#035183] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183]"
+              className="rounded-md bg-[#035183] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183] transition-all duration-300 hover:scale-105"
             >
               Contact Us
             </Link>
-            <Link href="/pricing" className="text-sm font-semibold leading-6 text-[#035183]">
+            <Link 
+              href="/pricing" 
+              className="text-sm font-semibold leading-6 text-[#035183] transition-all duration-300 hover:text-[#035183]/80"
+            >
               View Pricing <span aria-hidden="true">→</span>
             </Link>
           </div>
+        </div>
+        <div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+          <div className="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#035183] to-[#6FCEF4] opacity-20 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" />
         </div>
       </div>
     </div>
