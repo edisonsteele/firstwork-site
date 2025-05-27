@@ -4,7 +4,7 @@ const tiers = [
   {
     name: 'Single Device',
     id: 'tier-single',
-    price: { monthly: '$5' },
+    price: { monthly: '$12.99' },
     description: 'For individual students.',
     features: [
       'Full curriculum access',
@@ -17,13 +17,13 @@ const tiers = [
     mostPopular: false,
   },
   {
-    name: 'Small Group',
-    id: 'tier-small',
-    price: { monthly: '$20' },
-    description: 'For small classrooms.',
+    name: 'Family Pack',
+    id: 'tier-family',
+    price: { monthly: '$24.99' },
+    description: 'For families with multiple children.',
     features: [
       'All Single Device features',
-      '5 device licenses',
+      'Up to 5 device licenses',
       'Group monitoring',
       'Shared resources',
       'Collaboration tools',
@@ -34,38 +34,38 @@ const tiers = [
   {
     name: 'Classroom',
     id: 'tier-classroom',
-    price: { monthly: '$80' },
-    description: 'For full classrooms.',
+    price: { monthly: '$49.99' },
+    description: 'For educational institutions.',
     features: [
-      'All Small Group features',
-      '25 device licenses',
+      'All Family Pack features',
+      'Up to 10 device licenses',
       'Advanced analytics',
       'Custom paths',
       'Priority support',
     ],
-    cta: 'Get Started',
+    cta: 'Contact Sales',
     mostPopular: false,
   },
   {
-    name: 'School',
-    id: 'tier-school',
-    price: { monthly: '$300' },
-    description: 'For organizations.',
+    name: 'Enterprise',
+    id: 'tier-enterprise',
+    price: { monthly: 'Custom' },
+    description: 'For larger organizations.',
     features: [
       'All Classroom features',
-      '100 device licenses',
-      'School analytics',
+      '11+ device licenses',
+      '+$10 per additional device',
       'Custom integration',
       'Dedicated support',
     ],
-    cta: 'Get Started',
+    cta: 'Contact Sales',
     mostPopular: false,
   },
 ]
 
 export default function Pricing() {
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <div className="py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-base font-semibold leading-7 text-[#035183]">Pricing</h2>
@@ -103,9 +103,11 @@ export default function Pricing() {
                     <span className={`text-4xl font-bold tracking-tight ${tier.mostPopular ? 'text-white' : 'text-[#035183]'}`}>
                       {tier.price.monthly}
                     </span>
-                    <span className={`text-sm font-semibold leading-6 ${tier.mostPopular ? 'text-white/80' : 'text-[#035183]/80'}`}>
-                      /month
-                    </span>
+                    {tier.price.monthly !== 'Custom' && (
+                      <span className={`text-sm font-semibold leading-6 ${tier.mostPopular ? 'text-white/80' : 'text-[#035183]/80'}`}>
+                        /month
+                      </span>
+                    )}
                   </p>
                 </div>
                 <div className="h-[200px] mt-8">
@@ -131,7 +133,7 @@ export default function Pricing() {
                 </div>
                 <div className="h-[40px] mt-8">
                   <Link
-                    href="#"
+                    href={tier.id === 'tier-enterprise' || tier.id === 'tier-classroom' ? '/?showContact=true' : '/?showContact=true'}
                     className={`block rounded-md px-3 py-2 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 ${
                       tier.mostPopular
                         ? 'bg-white text-[#035183] hover:bg-white/90 focus-visible:outline-white'
