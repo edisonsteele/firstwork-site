@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
 const navigation = [
@@ -15,48 +16,50 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 bg-white/80 backdrop-blur-sm">
-      <nav className="container mx-auto flex items-center justify-between p-4" aria-label="Global">
+    <header className="relative isolate overflow-hidden bg-gradient-to-b from-[#6FCEF4]/10 to-white">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <Link href="/" className="-m-1.5 p-1.5">
-            <span className="text-2xl font-display font-bold text-primary-600">FirstWork</span>
+            <span className="text-2xl font-display font-bold">
+              <span className="text-[#035183]">First</span>
+              <span className="text-[#6FCEF4]">Work</span>
+            </span>
           </Link>
         </div>
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
-            onClick={() => setMobileMenuOpen(true)}
+            className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-[#035183]"
           >
             <span className="sr-only">Open main menu</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
           </button>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-center">
-          <div className="flex gap-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+        <div className="hidden lg:flex lg:gap-x-8">
+          <Link href="/how-it-works" className="text-sm font-semibold leading-6 text-[#035183] hover:text-[#6FCEF4] transition-colors">
+            How It Works
+          </Link>
+          <Link href="/pricing" className="text-sm font-semibold leading-6 text-[#035183] hover:text-[#6FCEF4] transition-colors">
+            Pricing
+          </Link>
+          <Link href="/support" className="text-sm font-semibold leading-6 text-[#035183] hover:text-[#6FCEF4] transition-colors">
+            Support
+          </Link>
+          <Link href="/contact" className="text-sm font-semibold leading-6 text-[#035183] hover:text-[#6FCEF4] transition-colors">
+            Contact
+          </Link>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-8">
-          <Link
-            href="/login"
-            className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
-          >
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-6">
+          <Link href="/login" className="text-sm font-semibold leading-6 text-[#035183] hover:text-[#6FCEF4] transition-colors py-2">
             Log in
           </Link>
           <Link
             href="/get-started"
-            className="btn btn-primary"
+            className="rounded-md bg-[#035183] px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183]"
           >
-            Get Started
+            Get started
           </Link>
         </div>
       </nav>
