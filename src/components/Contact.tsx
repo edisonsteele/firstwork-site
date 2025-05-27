@@ -1,135 +1,152 @@
 'use client'
 
-import { useSearchParams, useRouter } from 'next/navigation'
-import Link from 'next/link'
+import { useState } from 'react'
+import { submitContactForm } from '@/app/actions/contact'
 
 export default function Contact() {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const isContactOpen = searchParams.get('showContact') === 'true'
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [error, setError] = useState<string>('')
 
-  const closeModal = () => {
-    router.push('/')
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setStatus('loading')
+    setError('')
+
+    const formData = new FormData(event.currentTarget)
+    const result = await submitContactForm(formData)
+
+    if (result.success) {
+      setStatus('success')
+      event.currentTarget.reset()
+    } else {
+      setStatus('error')
+      setError(result.error || 'Something went wrong')
+    }
   }
 
   return (
-    <>
-      <div className="bg-white py-24 sm:py-32">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-base font-semibold leading-7 text-[#035183]">Get Started</h2>
-            <p className="mt-2 text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">
-              Ready to Transform Learning?
-            </p>
-            <p className="mt-6 text-lg leading-8 text-[#035183]/80">
-              Join the growing number of schools and organizations using FirstWork to enhance their learning programs.
-            </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
-                href="/?showContact=true"
-                className="rounded-md bg-[#035183] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183]"
-              >
-                Contact Us
-              </Link>
-              <Link
-                href="https://firstworkapp.com/download"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-semibold leading-6 text-[#035183]"
-              >
-                Download FirstWork <span aria-hidden="true">→</span>
-              </Link>
-            </div>
-          </div>
+    <div className="bg-white py-16 sm:py-24">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-[#035183] sm:text-4xl">
+            Contact Us
+          </h2>
+          <p className="mt-2 text-lg leading-8 text-gray-600">
+            Have questions? We're here to help.
+          </p>
         </div>
-      </div>
-
-      {/* Modal Overlay */}
-      {isContactOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
-          <div className="fixed inset-0 z-50 overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-                <div className="absolute right-0 top-0 pr-4 pt-4">
-                  <button
-                    type="button"
-                    className="rounded-md bg-white text-[#035183] hover:text-[#035183]/80 focus:outline-none"
-                    onClick={closeModal}
-                  >
-                    <span className="sr-only">Close</span>
-                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                <div className="sm:flex sm:items-start">
-                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
-                    <h3 className="text-base font-semibold leading-6 text-[#035183]">Contact Us</h3>
-                    <div className="mt-4">
-                      <p className="text-sm text-[#035183]/80">
-                        Fill out the form below and we'll get back to you as soon as possible.
-                      </p>
-                    </div>
-                    <form className="mt-6 space-y-4">
-                      <div>
-                        <label htmlFor="name" className="block text-sm font-medium text-[#035183]">
-                          Full Name
-                        </label>
-                        <input
-                          type="text"
-                          name="name"
-                          id="name"
-                          className="mt-1 block w-full rounded-md border-0 py-1.5 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-[#035183]">
-                          Email
-                        </label>
-                        <input
-                          type="email"
-                          name="email"
-                          id="email"
-                          className="mt-1 block w-full rounded-md border-0 py-1.5 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label htmlFor="message" className="block text-sm font-medium text-[#035183]">
-                          Message
-                        </label>
-                        <textarea
-                          name="message"
-                          id="message"
-                          rows={4}
-                          className="mt-1 block w-full rounded-md border-0 py-1.5 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
-                          required
-                        />
-                      </div>
-                      <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                        <button
-                          type="submit"
-                          className="inline-flex w-full justify-center rounded-md bg-[#035183] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 sm:ml-3 sm:w-auto"
-                        >
-                          Send Message
-                        </button>
-                        <button
-                          type="button"
-                          className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 hover:bg-[#035183]/10 sm:mt-0 sm:w-auto"
-                          onClick={closeModal}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
+        <form onSubmit={handleSubmit} className="mx-auto mt-16 max-w-xl sm:mt-20">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div>
+              <label htmlFor="name" className="block text-sm font-semibold leading-6 text-gray-900">
+                Name
+              </label>
+              <div className="mt-2.5">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  required
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-semibold leading-6 text-gray-900">
+                Email
+              </label>
+              <div className="mt-2.5">
+                <input
+                  type="email"
+                  name="email"
+                  id="email"
+                  required
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-semibold leading-6 text-gray-900">
+                Phone number
+              </label>
+              <div className="mt-2.5">
+                <input
+                  type="tel"
+                  name="phone"
+                  id="phone"
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div>
+              <label htmlFor="organization" className="block text-sm font-semibold leading-6 text-gray-900">
+                Organization
+              </label>
+              <div className="mt-2.5">
+                <input
+                  type="text"
+                  name="organization"
+                  id="organization"
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="subject" className="block text-sm font-semibold leading-6 text-gray-900">
+                Subject
+              </label>
+              <div className="mt-2.5">
+                <select
+                  name="subject"
+                  id="subject"
+                  required
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                >
+                  <option value="">Select a subject</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Support">Support</option>
+                  <option value="Partnership">Partnership</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="message" className="block text-sm font-semibold leading-6 text-gray-900">
+                Message
+              </label>
+              <div className="mt-2.5">
+                <textarea
+                  name="message"
+                  id="message"
+                  rows={4}
+                  required
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                />
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </>
+          <div className="mt-10">
+            <button
+              type="submit"
+              disabled={status === 'loading'}
+              className="block w-full rounded-md bg-[#035183] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183] disabled:opacity-50"
+            >
+              {status === 'loading' ? 'Sending...' : 'Send message'}
+            </button>
+          </div>
+          {status === 'success' && (
+            <p className="mt-4 text-sm text-green-600">
+              Thank you for your message. We'll get back to you soon!
+            </p>
+          )}
+          {status === 'error' && (
+            <p className="mt-4 text-sm text-red-600">
+              {error || 'Something went wrong. Please try again.'}
+            </p>
+          )}
+        </form>
+      </div>
+    </div>
   )
 } 
