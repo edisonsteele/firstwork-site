@@ -6,7 +6,6 @@ import {
   PhoneIcon,
   MapPinIcon,
   ClockIcon,
-  ChatBubbleLeftRightIcon,
   BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
 
@@ -64,7 +63,7 @@ function ContactPage() {
             Choose the best way to reach us based on your needs.
           </p>
         </div>
-        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 text-base leading-7 sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-8 text-base leading-7 sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none">
           <div className="rounded-2xl bg-[#035183]/5 p-8">
             <div className="flex items-center gap-4">
               <EnvelopeIcon className="h-6 w-6 text-[#035183]" />
@@ -88,18 +87,6 @@ function ContactPage() {
             <a href="tel:+1234567890" className="mt-4 block text-[#035183] hover:text-[#035183]/80">
               (123) 456-7890
             </a>
-          </div>
-          <div className="rounded-2xl bg-[#035183]/5 p-8">
-            <div className="flex items-center gap-4">
-              <ChatBubbleLeftRightIcon className="h-6 w-6 text-[#035183]" />
-              <h3 className="text-lg font-semibold text-[#035183]">Live Chat</h3>
-            </div>
-            <p className="mt-4 text-[#035183]/80">
-              Available during business hours:
-            </p>
-            <button className="mt-4 text-[#035183] hover:text-[#035183]/80">
-              Start Chat
-            </button>
           </div>
         </div>
       </div>
