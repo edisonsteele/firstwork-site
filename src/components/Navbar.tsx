@@ -32,18 +32,20 @@ export default function Navbar() {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
-        <div className="hidden lg:flex lg:gap-x-8">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
-            >
-              {item.name}
-            </Link>
-          ))}
+        <div className="hidden lg:flex lg:flex-1 lg:justify-center">
+          <div className="flex gap-x-8">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
         </div>
-        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:gap-x-4">
+        <div className="hidden lg:flex lg:flex-1 lg:justify-end lg:items-center lg:gap-x-8">
           <Link
             href="/login"
             className="text-sm font-semibold leading-6 text-gray-900 hover:text-primary-600 transition-colors"
@@ -90,7 +92,7 @@ export default function Navbar() {
                   </Link>
                 ))}
               </div>
-              <div className="py-6">
+              <div className="py-6 space-y-4">
                 <Link
                   href="/login"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
@@ -100,7 +102,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/get-started"
-                  className="mt-4 block w-full btn btn-primary"
+                  className="block w-full btn btn-primary"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Get Started
