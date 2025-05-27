@@ -14,11 +14,17 @@ export async function submitContactForm(formData: FormData) {
   const subject = formData.get('subject') as string
   const message = formData.get('message') as string
 
+  // Check if Supabase environment variables are set
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    console.error('Missing Supabase environment variables')
+    return { success: false, error: 'Server configuration error' }
+  }
+
   // Create Supabase client
   const cookieStore = cookies()
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         get(name: string) {
@@ -45,36 +51,41 @@ export async function submitContactForm(formData: FormData) {
 
     if (error) throw error
 
-    // Send email notification
+    // Send email notification if Resend API key is available
     if (process.env.RESEND_API_KEY) {
-      await resend.emails.send({
-        from: 'FirstWork Contact <contact@firstworkapp.com>',
-        to: ['admin@firstworkapp.com'],
-        subject: `New Contact Form Submission: ${subject}`,
-        text: `
-          Name: ${name}
-          Email: ${email}
-          Phone: ${phone || 'Not provided'}
-          Organization: ${organization || 'Not provided'}
-          Subject: ${subject}
-          Message: ${message}
-        `,
-      })
+      try {
+        await resend.emails.send({
+          from: 'FirstWork Contact <contact@firstworkapp.com>',
+          to: ['admin@firstworkapp.com'],
+          subject: `New Contact Form Submission: ${subject}`,
+          text: `
+            Name: ${name}
+            Email: ${email}
+            Phone: ${phone || 'Not provided'}
+            Organization: ${organization || 'Not provided'}
+            Subject: ${subject}
+            Message: ${message}
+          `,
+        })
 
-      // Send confirmation email to user
-      await resend.emails.send({
-        from: 'FirstWork Contact <contact@firstworkapp.com>',
-        to: [email],
-        subject: 'Thank you for contacting FirstWork',
-        text: `
-          Dear ${name},
+        // Send confirmation email to user
+        await resend.emails.send({
+          from: 'FirstWork Contact <contact@firstworkapp.com>',
+          to: [email],
+          subject: 'Thank you for contacting FirstWork',
+          text: `
+            Dear ${name},
 
-          Thank you for contacting FirstWork. We have received your message and will get back to you as soon as possible.
+            Thank you for contacting FirstWork. We have received your message and will get back to you as soon as possible.
 
-          Best regards,
-          The FirstWork Team
-        `,
-      })
+            Best regards,
+            The FirstWork Team
+          `,
+        })
+      } catch (emailError) {
+        console.error('Email sending error:', emailError)
+        // Don't fail the whole submission if email fails
+      }
     }
 
     return { success: true }
