@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth'
 import { createBrowserClient } from '@supabase/ssr'
 
 export default function DashboardPage() {
-  const { user } = useAuth()
+  const { user, loading: authLoading, error: authError } = useAuth()
   const [tokens, setTokens] = useState<number>(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -96,16 +96,16 @@ export default function DashboardPage() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return <div className="p-4">Loading...</div>
+  }
+
+  if (authError) {
+    return <div className="p-4 text-red-500">Authentication Error: {authError}</div>
   }
 
   if (error) {
     return <div className="p-4 text-red-500">{error}</div>
-  }
-
-  if (!user?.id) {
-    return <div className="p-4">Please log in to access this page.</div>
   }
 
   return (
