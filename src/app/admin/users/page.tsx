@@ -34,12 +34,22 @@ export default function AdminUsersPage() {
     loadUsers()
   }, [user?.id])
 
+  if (loading) {
+    return <div className="p-4">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>
+  }
+
+  if (!user?.id) {
+    return <div className="p-4">Please log in to access this page.</div>
+  }
+
+  // At this point, TypeScript knows user.id exists
+  const adminId = user.id
+
   const handleAddTokens = async (userId: string) => {
-    if (!user?.id) {
-      setError('You must be logged in to add tokens')
-      return
-    }
-    const adminId = user.id
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
       await addTokensToUser(userId, addAmount[userId] || 0, adminId)
@@ -55,21 +65,6 @@ export default function AdminUsersPage() {
       setAdding((prev) => ({ ...prev, [userId]: false }))
     }
   }
-
-  if (loading) {
-    return <div className="p-4">Loading...</div>
-  }
-
-  if (error) {
-    return <div className="p-4 text-red-500">{error}</div>
-  }
-
-  if (!user?.id) {
-    return <div className="p-4">Please log in to access this page.</div>
-  }
-
-  // At this point, TypeScript knows user.id exists
-  const adminId = user.id
 
   return (
     <div className="p-4">
