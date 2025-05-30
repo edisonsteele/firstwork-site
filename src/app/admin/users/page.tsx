@@ -68,6 +68,9 @@ export default function AdminUsersPage() {
     return <div className="p-4">Please log in to access this page.</div>
   }
 
+  // At this point, TypeScript knows user.id exists
+  const adminId = user.id
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
