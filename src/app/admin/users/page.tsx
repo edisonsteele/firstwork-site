@@ -54,9 +54,9 @@ export default function AdminUsersPage() {
   const handleAddTokens = async (userId: string) => {
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
-      await addTokensToUser(userId, addAmount[userId] || 0, currentUser.id)
+      await addTokensToUser(userId, addAmount[userId] || 0, adminId)
       // Refresh users
-      const updated = await getManagedUsersWithTokens(currentUser.id)
+      const updated = await getManagedUsersWithTokens(adminId)
       setUsers(updated)
       // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
