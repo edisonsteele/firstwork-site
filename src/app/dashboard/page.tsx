@@ -23,14 +23,26 @@ export default function DashboardPage() {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
       )
       try {
+        // First try to get existing tokens
         const { data, error } = await supabase
           .from('tokens')
           .select('balance')
           .eq('user_id', user.id)
           .single()
 
-        if (error) throw error
-        setTokens(data?.balance || 0)
+        if (error && error.code === 'PGRST116') {
+          // No record found, create one with 0 balance
+          const { error: insertError } = await supabase
+            .from('tokens')
+            .insert([{ user_id: user.id, balance: 0 }])
+          
+          if (insertError) throw insertError
+          setTokens(0)
+        } else if (error) {
+          throw error
+        } else {
+          setTokens(data?.balance || 0)
+        }
       } catch (err) {
         console.error('Error loading tokens:', err)
         setError('Failed to load tokens')
@@ -53,9 +65,16 @@ export default function DashboardPage() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
     try {
+      // Create a transaction record
       const { error } = await supabase
         .from('token_transactions')
-        .insert([{ user_id: user.id, amount: buyAmount }])
+        .insert([{
+          user_id: user.id,
+          amount: buyAmount,
+          type: 'add',
+          description: 'Tokens purchased by user',
+          created_by: user.id
+        }])
 
       if (error) throw error
 
