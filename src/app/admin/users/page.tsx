@@ -46,15 +46,13 @@ export default function AdminUsersPage() {
     return <div className="p-4">Please log in to access this page.</div>
   }
 
-  // At this point, TypeScript knows user.id exists
-  const adminId = user.id
-
+  // At this point, we know user is not null
   const handleAddTokens = async (userId: string) => {
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
-      await addTokensToUser(userId, addAmount[userId] || 0, adminId)
+      await addTokensToUser(userId, addAmount[userId] || 0, user!.id)
       // Refresh users
-      const updated = await getManagedUsersWithTokens(adminId)
+      const updated = await getManagedUsersWithTokens(user!.id)
       setUsers(updated)
       // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
