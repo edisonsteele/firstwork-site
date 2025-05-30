@@ -1,58 +1,92 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
-import { useAuth } from '@/lib/AuthContext'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/useAuth'
+import { createBrowserClient } from '@supabase/ssr'
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const [tokenCount, setTokenCount] = useState<number>(0)
-  const [buyAmount, setBuyAmount] = useState<number>(1)
-  const [loading, setLoading] = useState(false)
+  const [tokens, setTokens] = useState<number>(0)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
+  const [buyAmount, setBuyAmount] = useState<number>(0)
+  const [buying, setBuying] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      fetchTokenCount()
-    }
-    // eslint-disable-next-line
-  }, [user])
+    const loadTokens = async () => {
+      if (!user?.id) {
+        setLoading(false)
+        return
+      }
+      const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      )
+      try {
+        const { data, error } = await supabase
+          .from('tokens')
+          .select('balance')
+          .eq('user_id', user.id)
+          .single()
 
-  async function fetchTokenCount() {
-    setLoading(true)
-    setError(null)
-    setSuccess(null)
-    const { data, error } = await supabase
-      .from('tokens')
-      .select('amount')
-      .eq('user_id', user.id)
-    if (error) {
-      setError('Failed to fetch licenses')
-      setTokenCount(0)
-    } else {
-      const total = (data || []).reduce((sum, t) => sum + t.amount, 0)
-      setTokenCount(total)
+        if (error) throw error
+        setTokens(data?.balance || 0)
+      } catch (err) {
+        console.error('Error loading tokens:', err)
+        setError('Failed to load tokens')
+      } finally {
+        setLoading(false)
+      }
     }
-    setLoading(false)
+
+    loadTokens()
+  }, [user?.id])
+
+  const handleBuyTokens = async () => {
+    if (!user?.id) {
+      setError('You must be logged in to buy tokens')
+      return
+    }
+    setBuying(true)
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    )
+    try {
+      const { error } = await supabase
+        .from('token_transactions')
+        .insert([{ user_id: user.id, amount: buyAmount }])
+
+      if (error) throw error
+
+      // Refresh tokens
+      const { data, error: refreshError } = await supabase
+        .from('tokens')
+        .select('balance')
+        .eq('user_id', user.id)
+        .single()
+
+      if (refreshError) throw refreshError
+      setTokens(data?.balance || 0)
+      setBuyAmount(0)
+    } catch (err) {
+      console.error('Error buying tokens:', err)
+      setError('Failed to buy tokens')
+    } finally {
+      setBuying(false)
+    }
   }
 
-  async function handleBuyLicenses(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-    setSuccess(null)
-    const { error } = await supabase
-      .from('tokens')
-      .insert([{ user_id: user.id, amount: buyAmount }])
-    if (error) {
-      setError('Failed to buy licenses')
-    } else {
-      setSuccess(`Successfully bought ${buyAmount} license${buyAmount > 1 ? 's' : ''}`)
-      setBuyAmount(1)
-      fetchTokenCount()
-    }
-    setLoading(false)
+  if (loading) {
+    return <div className="p-4">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>
+  }
+
+  if (!user?.id) {
+    return <div className="p-4">Please log in to access this page.</div>
   }
 
   return (
@@ -61,27 +95,28 @@ export default function DashboardPage() {
         <h1 className="text-3xl font-bold mb-4">Dashboard</h1>
         <p className="mb-6">Welcome to your backend panel!</p>
         <div className="mb-8 p-4 bg-gray-50 rounded shadow">
-          <h2 className="text-xl font-semibold mb-2">Your Licenses</h2>
-          <div className="text-2xl font-bold mb-2">{loading ? 'Loading...' : tokenCount}</div>
-          <form onSubmit={handleBuyLicenses} className="flex items-center gap-2 mt-4">
-            <input
-              type="number"
-              min={1}
-              value={buyAmount}
-              onChange={e => setBuyAmount(Number(e.target.value))}
-              className="border px-2 py-1 rounded w-24"
-              disabled={loading}
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
-            >
-              {loading ? 'Processing...' : 'Buy License(s)'}
-            </button>
-          </form>
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-          {success && <div className="text-green-600 mt-2">{success}</div>}
+          <h2 className="text-xl font-semibold mb-2">Your Tokens</h2>
+          <div className="text-2xl font-bold mb-2">{tokens}</div>
+          <div>
+            <h2 className="text-lg font-semibold mb-4">Buy More Tokens</h2>
+            <div className="flex items-center gap-4">
+              <input
+                type="number"
+                min="1"
+                value={buyAmount || ''}
+                onChange={(e) => setBuyAmount(parseInt(e.target.value) || 0)}
+                className="border rounded px-3 py-2 w-32"
+                placeholder="Amount"
+              />
+              <button
+                onClick={handleBuyTokens}
+                disabled={buying || buyAmount <= 0}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+              >
+                {buying ? 'Buying...' : 'Buy Tokens'}
+              </button>
+            </div>
+          </div>
         </div>
         {/* Add dashboard widgets, links, or stats here */}
       </div>
