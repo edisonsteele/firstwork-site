@@ -37,11 +37,12 @@ export default function AdminUsersPage() {
       setError('You must be logged in to add tokens')
       return
     }
+    const adminId = user.id
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
-      await addTokensToUser(userId, addAmount[userId] || 0, user.id)
+      await addTokensToUser(userId, addAmount[userId] || 0, adminId)
       // Refresh users
-      const updated = await getManagedUsersWithTokens(user.id)
+      const updated = await getManagedUsersWithTokens(adminId)
       setUsers(updated)
       // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
