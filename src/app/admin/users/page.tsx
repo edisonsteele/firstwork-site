@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { getManagedUsersWithTokens, addTokensToUser } from '@/app/actions/users'
 import { UserWithTokens } from '@/types'
+import { User } from '@supabase/supabase-js'
 
 export default function AdminUsersPage() {
   const { user } = useAuth()
@@ -48,13 +49,14 @@ export default function AdminUsersPage() {
 
   // At this point, TypeScript knows user.id exists
   const adminId = user.id
+  const currentUser = user as User
 
   const handleAddTokens = async (userId: string) => {
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
-      await addTokensToUser(userId, addAmount[userId] || 0, adminId)
+      await addTokensToUser(userId, addAmount[userId] || 0, currentUser.id)
       // Refresh users
-      const updated = await getManagedUsersWithTokens(adminId)
+      const updated = await getManagedUsersWithTokens(currentUser.id)
       setUsers(updated)
       // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
