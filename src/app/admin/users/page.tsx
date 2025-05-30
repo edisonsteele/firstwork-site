@@ -1,4 +1,6 @@
 "use client"
+
+// Admin users page for managing user tokens
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { getManagedUsersWithTokens, addTokensToUser } from '@/app/actions/users'
