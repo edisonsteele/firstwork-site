@@ -1,89 +1,107 @@
 "use client"
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/lib/AuthContext'
-import { getManagedUsersWithTokens, addTokensToUser } from '@/lib/admin'
+import { useAuth } from '@/hooks/useAuth'
+import { getManagedUsersWithTokens, addTokensToUser } from '@/app/actions/users'
+import { UserWithTokens } from '@/types'
 
 export default function AdminUsersPage() {
   const { user } = useAuth()
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<UserWithTokens[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [addAmount, setAddAmount] = useState<{ [userId: string]: number }>({})
-  const [adding, setAdding] = useState<{ [userId: string]: boolean }>({})
+  const [addAmount, setAddAmount] = useState<Record<string, number>>({})
+  const [adding, setAdding] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    if (user) {
-      getManagedUsersWithTokens(user.id)
-        .then(setUsers)
-        .catch((err) => setError(err.message))
-        .finally(() => setLoading(false))
+    const loadUsers = async () => {
+      if (!user?.id) {
+        setLoading(false)
+        return
+      }
+      try {
+        const data = await getManagedUsersWithTokens(user.id)
+        setUsers(data)
+      } catch (err) {
+        setError('Failed to load users')
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
     }
-  }, [user])
+
+    loadUsers()
+  }, [user?.id])
 
   const handleAddTokens = async (userId: string) => {
+    if (!user?.id) {
+      setError('You must be logged in to add tokens')
+      return
+    }
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
       await addTokensToUser(userId, addAmount[userId] || 0, user.id)
       // Refresh users
       const updated = await getManagedUsersWithTokens(user.id)
       setUsers(updated)
+      // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
-    } catch (err: any) {
-      setError(err.message)
+    } catch (err) {
+      setError('Failed to add tokens')
+      console.error(err)
     } finally {
       setAdding((prev) => ({ ...prev, [userId]: false }))
     }
   }
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
+  if (loading) {
+    return <div className="p-4">Loading...</div>
+  }
+
+  if (error) {
+    return <div className="p-4 text-red-500">{error}</div>
+  }
+
+  if (!user?.id) {
+    return <div className="p-4">Please log in to access this page.</div>
+  }
 
   return (
-    <div className="max-w-3xl mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-6">Managed Users & Tokens</h1>
-      <table className="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 border">User</th>
-            <th className="px-4 py-2 border">Tokens</th>
-            <th className="px-4 py-2 border">Add Tokens</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u) => (
-            <tr key={u.id}>
-              <td className="px-4 py-2 border flex items-center gap-2">
-                {u.avatar_url && (
-                  <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full" />
-                )}
-                <span>{u.full_name}</span>
-              </td>
-              <td className="px-4 py-2 border text-center">{u.tokenBalance}</td>
-              <td className="px-4 py-2 border">
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Manage Users</h1>
+      <div className="grid gap-4">
+        {users.map((user) => (
+          <div key={user.id} className="border p-4 rounded-lg">
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-semibold">{user.email}</h2>
+                <p className="text-sm text-gray-600">Tokens: {user.tokens}</p>
+              </div>
+              <div className="flex items-center gap-2">
                 <input
                   type="number"
-                  min={1}
-                  value={addAmount[u.id] || ''}
+                  min="0"
+                  value={addAmount[user.id] || ''}
                   onChange={(e) =>
                     setAddAmount((prev) => ({
                       ...prev,
-                      [u.id]: parseInt(e.target.value, 10) || 0,
+                      [user.id]: parseInt(e.target.value) || 0,
                     }))
                   }
-                  className="border px-2 py-1 w-20 mr-2"
+                  className="border rounded px-2 py-1 w-24"
+                  placeholder="Amount"
                 />
                 <button
-                  onClick={() => handleAddTokens(u.id)}
-                  disabled={adding[u.id] || !addAmount[u.id]}
-                  className="bg-indigo-600 text-white px-3 py-1 rounded disabled:opacity-50"
+                  onClick={() => handleAddTokens(user.id)}
+                  disabled={adding[user.id]}
+                  className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 disabled:opacity-50"
                 >
-                  {adding[u.id] ? 'Adding...' : 'Add'}
+                  {adding[user.id] ? 'Adding...' : 'Add Tokens'}
                 </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 } 
