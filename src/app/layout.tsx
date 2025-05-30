@@ -1,9 +1,12 @@
+"use client"
+
 import type { Metadata } from 'next'
 import { Inter, Outfit } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { Suspense } from 'react'
+import { AuthProvider } from '@/lib/AuthContext'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -17,11 +20,6 @@ const outfit = Outfit({
   variable: '--font-outfit',
 })
 
-export const metadata: Metadata = {
-  title: 'FirstWork - ABA Lesson Delivery App',
-  description: 'Make learning on smart devices motivating and adaptive with FirstWork\'s ABA lesson delivery app.',
-}
-
 export default function RootLayout({
   children,
 }: {
@@ -30,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <body className="min-h-screen bg-white font-sans antialiased">
+        <AuthProvider>
         <Suspense fallback={<div>Loading...</div>}>
           <div className="flex min-h-screen flex-col">
             <Navbar />
@@ -39,6 +38,7 @@ export default function RootLayout({
             <Footer />
           </div>
         </Suspense>
+        </AuthProvider>
       </body>
     </html>
   )
