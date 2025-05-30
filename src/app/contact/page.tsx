@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   EnvelopeIcon,
   PhoneIcon,
@@ -8,29 +8,37 @@ import {
   ClockIcon,
   BuildingOfficeIcon
 } from '@heroicons/react/24/outline'
+import { submitContactForm } from '@/app/actions/contact'
 
 function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    organization: '',
-    subject: '',
-    message: ''
-  })
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [error, setError] = useState<string>('')
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Handle form submission
-    console.log('Form submitted:', formData)
-  }
+  // Reset status after 5 seconds on success
+  useEffect(() => {
+    if (status === 'success') {
+      const timer = setTimeout(() => {
+        setStatus('idle')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [status])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setStatus('loading')
+    setError('')
+
+    const formData = new FormData(event.currentTarget)
+    const result = await submitContactForm(formData)
+
+    if (result.success) {
+      setStatus('success')
+      event.currentTarget.reset()
+    } else {
+      setStatus('error')
+      setError(result.error || 'Something went wrong')
+    }
   }
 
   return (
@@ -110,8 +118,7 @@ function ContactPage() {
                   type="text"
                   name="name"
                   id="name"
-                  value={formData.name}
-                  onChange={handleChange}
+                  required
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 />
               </div>
@@ -125,8 +132,7 @@ function ContactPage() {
                   type="email"
                   name="email"
                   id="email"
-                  value={formData.email}
-                  onChange={handleChange}
+                  required
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 />
               </div>
@@ -140,8 +146,6 @@ function ContactPage() {
                   type="tel"
                   name="phone"
                   id="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 />
               </div>
@@ -155,8 +159,6 @@ function ContactPage() {
                   type="text"
                   name="organization"
                   id="organization"
-                  value={formData.organization}
-                  onChange={handleChange}
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 />
               </div>
@@ -169,16 +171,15 @@ function ContactPage() {
                 <select
                   name="subject"
                   id="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
+                  required
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 >
                   <option value="">Select a subject</option>
-                  <option value="general">General Inquiry</option>
-                  <option value="support">Technical Support</option>
-                  <option value="billing">Billing Question</option>
-                  <option value="partnership">Partnership Opportunity</option>
-                  <option value="other">Other</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Support">Support</option>
+                  <option value="Partnership">Partnership</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>
@@ -191,19 +192,51 @@ function ContactPage() {
                   name="message"
                   id="message"
                   rows={4}
-                  value={formData.message}
-                  onChange={handleChange}
+                  required
                   className="block w-full rounded-md border-0 px-3.5 py-2 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
           </div>
+          {status === 'success' && (
+            <div className="rounded-md bg-green-50 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-green-800">
+                    Thank you for your message. We'll get back to you soon!
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="rounded-md bg-red-50 p-4 mb-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-red-800">
+                    {error || 'Something went wrong. Please try again.'}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
           <div className="mt-10">
             <button
               type="submit"
-              className="block w-full rounded-md bg-[#035183] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183] transition-all duration-300 hover:scale-105"
+              disabled={status === 'loading'}
+              className="block w-full rounded-md bg-[#035183] px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#035183] transition-all duration-300 hover:scale-105 disabled:opacity-50"
             >
-              Send Message
+              {status === 'loading' ? 'Sending...' : 'Send Message'}
             </button>
           </div>
         </form>

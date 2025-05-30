@@ -3,14 +3,47 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { submitContactForm } from '@/app/actions/contact'
 
 export default function Footer() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const isContactOpen = searchParams.get('showContact') === 'true'
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [error, setError] = useState<string>('')
+
+  // Reset status when modal closes
+  useEffect(() => {
+    if (!isContactOpen) {
+      setStatus('idle')
+      setError('')
+    }
+  }, [isContactOpen])
 
   const closeModal = () => {
     router.push('/')
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setStatus('loading')
+    setError('')
+
+    const formData = new FormData(event.currentTarget)
+    const result = await submitContactForm(formData)
+
+    if (result.success) {
+      setStatus('success')
+      event.currentTarget.reset()
+      // Close modal after 3 seconds
+      setTimeout(() => {
+        closeModal()
+      }, 3000)
+    } else {
+      setStatus('error')
+      setError(result.error || 'Something went wrong')
+    }
   }
 
   return (
@@ -138,7 +171,7 @@ export default function Footer() {
                         Fill out the form below and we'll get back to you as soon as possible.
                       </p>
                     </div>
-                    <form className="mt-6 space-y-4">
+                    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
                       <div>
                         <label htmlFor="name" className="block text-sm font-medium text-[#035183]">
                           Full Name
@@ -164,6 +197,24 @@ export default function Footer() {
                         />
                       </div>
                       <div>
+                        <label htmlFor="subject" className="block text-sm font-medium text-[#035183]">
+                          Subject
+                        </label>
+                        <select
+                          name="subject"
+                          id="subject"
+                          className="mt-1 block w-full rounded-md border-0 py-1.5 text-[#035183] shadow-sm ring-1 ring-inset ring-[#035183]/10 focus:ring-2 focus:ring-inset focus:ring-[#035183] sm:text-sm sm:leading-6"
+                          required
+                        >
+                          <option value="">Select a subject</option>
+                          <option value="General Inquiry">General Inquiry</option>
+                          <option value="Sales">Sales</option>
+                          <option value="Support">Support</option>
+                          <option value="Partnership">Partnership</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div>
                         <label htmlFor="message" className="block text-sm font-medium text-[#035183]">
                           Message
                         </label>
@@ -175,12 +226,45 @@ export default function Footer() {
                           required
                         />
                       </div>
+                      {status === 'success' && (
+                        <div className="rounded-md bg-green-50 p-4 mb-4">
+                          <div className="flex">
+                            <div className="flex-shrink-0">
+                              <svg className="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <div className="ml-3">
+                              <p className="text-sm font-medium text-green-800">
+                                Thank you for your message. We'll get back to you soon!
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {status === 'error' && (
+                        <div className="rounded-md bg-red-50 p-4 mb-4">
+                          <div className="flex">
+                            <div className="flex-shrink-0">
+                              <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                            <div className="ml-3">
+                              <p className="text-sm font-medium text-red-800">
+                                {error || 'Something went wrong. Please try again.'}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                         <button
                           type="submit"
-                          className="inline-flex w-full justify-center rounded-md bg-[#035183] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 sm:ml-3 sm:w-auto"
+                          disabled={status === 'loading'}
+                          className="inline-flex w-full justify-center rounded-md bg-[#035183] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#035183]/90 sm:ml-3 sm:w-auto disabled:opacity-50"
                         >
-                          Send Message
+                          {status === 'loading' ? 'Sending...' : 'Send Message'}
                         </button>
                         <button
                           type="button"
