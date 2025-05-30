@@ -2,6 +2,10 @@ import { createBrowserClient } from '@supabase/ssr'
 import { UserWithTokens } from '@/types'
 
 export async function getManagedUsersWithTokens(adminId: string): Promise<UserWithTokens[]> {
+  if (!adminId) {
+    throw new Error('Admin ID is required')
+  }
+
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
