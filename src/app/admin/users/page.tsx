@@ -46,13 +46,15 @@ export default function AdminUsersPage() {
     return <div className="p-4">Please log in to access this page.</div>
   }
 
-  // At this point, we know user is not null
+  const adminId = user.id
+
   const handleAddTokens = async (userId: string) => {
+    if (!adminId) return
     setAdding((prev) => ({ ...prev, [userId]: true }))
     try {
-      await addTokensToUser(userId, addAmount[userId] || 0, user!.id)
+      await addTokensToUser(userId, addAmount[userId] || 0, adminId)
       // Refresh users
-      const updated = await getManagedUsersWithTokens(user!.id)
+      const updated = await getManagedUsersWithTokens(adminId)
       setUsers(updated)
       // Clear the input
       setAddAmount((prev) => ({ ...prev, [userId]: 0 }))
